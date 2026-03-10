@@ -42,7 +42,7 @@ export const en = {
     resultsDesc: "Real student scores",
   },
   hero: {
-    badge: "Now enrolling for Fall 2025 cohort",
+    badge: "Now enrolling for spring 2026 cohort",
     title: "The Most Systematic SAT & IELTS Preparation Platform",
     subtitle:
       "Structured preparation. Real score growth. Transparent progress tracking.",

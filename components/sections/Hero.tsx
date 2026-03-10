@@ -35,23 +35,28 @@ export default function Hero() {
             <span>{h.badge}</span>
             <span className="text-blue-400">→</span>
           </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-navy-950 dark:text-white tracking-tight text-balance leading-[1.05]"
-          >
-            {h.title.replace("SAT & IELTS", "").split("").join("")}
-            {/* Render with colored accent */}
-            {h.title.includes("SAT") ? (
-              <>
-                {h.title.split("SAT & IELTS")[0]}
-                <span className="text-blue-600 dark:text-blue-400">SAT & IELTS</span>
-                {h.title.split("SAT & IELTS")[1]}
-              </>
-            ) : h.title}
-          </motion.h1>
+  <motion.h1
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: 0.1 }}
+  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-navy-950 dark:text-white tracking-tight text-balance leading-[1.05]"
+>
+  {h.title.includes("SAT и IELTS") ? (
+    <>
+      {h.title.split("SAT и IELTS")[0]}
+      <span className="text-blue-600 dark:text-blue-400">SAT и IELTS</span>
+      {h.title.split("SAT и IELTS")[1]}
+    </>
+  ) : h.title.includes("SAT & IELTS") ? (
+    <>
+      {h.title.split("SAT & IELTS")[0]}
+      <span className="text-blue-600 dark:text-blue-400">SAT & IELTS</span>
+      {h.title.split("SAT & IELTS")[1]}
+    </>
+  ) : (
+    h.title
+  )}
+</motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
