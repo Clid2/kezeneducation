@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #0f172a;
+  --blue: #2563eb;
+  --bg: #ffffff;
+  --bg-subtle: #f8fafc;
+  --border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+}
+
+.dark {
+  --bg: #0f172a;
+  --bg-subtle: #1e293b;
+  --border: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+/* Selection */
+::selection { background: rgba(37,99,235,0.15); color: #0f172a; }
+.dark ::selection { background: rgba(96,165,250,0.2); color: #f1f5f9; }
+
+.text-balance { text-wrap: balance; }
+
+/* Grid background */
+.bg-grid {
+  background-image: linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.dark .bg-grid {
+  background-image: linear-gradient(rgba(96,165,250,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96,165,250,0.04) 1px, transparent 1px);
+}
+
+/* Dot background */
+.bg-dots {
+  background-image: radial-gradient(circle, rgba(37,99,235,0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Smooth theme transition for all elements */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Override for animations that shouldn't transition */
+.no-transition, .no-transition * {
+  transition: none !important;
+}
