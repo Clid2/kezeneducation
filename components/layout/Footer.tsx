@@ -75,7 +75,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 hover:text-white transition-colors"
               >
                 <Phone size={14} className="text-blue-400 flex-shrink-0" />
-                +7 707 695 76 88
+                +7 700 230 68 30
               </a>
               <span className="flex items-center gap-2.5">
                 <MapPin size={14} className="text-blue-400 flex-shrink-0" />
