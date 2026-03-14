@@ -245,7 +245,7 @@ export const en = {
     nameLabel: "Full Name",
     namePlaceholder: "Aizat Bekova",
     phoneLabel: "Phone",
-    phonePlaceholder: "+7 707 695 76 88",
+    phonePlaceholder: "+7 700 230 68 30",
     emailLabel: "Email",
     emailPlaceholder: "you@example.com",
     programLabel: "Program of Interest",
@@ -590,7 +590,7 @@ export const en = {
       { title: "Host study sessions", desc: "Organize informal study groups or prep sessions that you lead and facilitate." },
     ],
     benefits: [
-      { title: "Referral rewards", desc: "Earn cash or points for every student you refer who enrolls.", value: "₸5,000 per referral" },
+      { title: "Referral rewards", desc: "Earn cash or points for every student you refer who enrolls.", value: "Bonuses per referral" },
       { title: "Official certificates", desc: "Receive a Kezen Ambassador certificate valid for university applications.", value: "Verified certificate" },
       { title: "Network access", desc: "Join an exclusive network of high-achieving students across Kazakhstan and beyond.", value: "Exclusive community" },
       { title: "Brand recognition", desc: "Be featured on the Kezen website and social channels as an official ambassador.", value: "Public recognition" },
