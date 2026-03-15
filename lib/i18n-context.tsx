@@ -9,11 +9,12 @@ import React, {
 } from "react";
 import { en } from "@/messages/en";
 import { ru } from "@/messages/ru";
+import { kk } from "@/messages/kk";
 import type { Translation } from "@/messages/en";
 
-export type Locale = "en" | "ru";
+export type Locale = "en" | "ru" | "kk";
 
-const translations: Record<Locale, Translation> = { en, ru };
+const translations: Record<Locale, Translation> = { en, ru, kk };
 
 interface I18nContextType {
   locale: Locale;
@@ -35,7 +36,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     try {
       const saved = localStorage.getItem("kezen_locale") as Locale | null;
-      if (saved === "en" || saved === "ru") {
+      if (saved === "en" || saved === "ru" || saved === "kk") {
         setLocaleState(saved);
       }
     } catch {
@@ -52,7 +53,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Use default locale on SSR to avoid hydration mismatch
   const activeLocale = mounted ? locale : "ru";
 
   return (

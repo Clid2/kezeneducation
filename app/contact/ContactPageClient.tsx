@@ -53,7 +53,7 @@ export default function ContactPageClient() {
 
   const contactItems = [
     { icon: Mail, label: c.emailInfo, value: "hello@kezen.edu", href: "mailto:hello@kezen.edu" },
-    { icon: Phone, label: c.phoneInfo, value: "+7 700 230 68 30", href: "tel:+77002306830" },
+    { icon: Phone, label: c.phoneInfo, value: "+7 707 695 76 88", href: "tel:+77076957688" },
     { icon: MessageCircle, label: c.telegramInfo, value: c.telegram, href: "https://t.me/kezen_edu" },
     { icon: MapPin, label: c.locationInfo, value: c.location, href: "#" },
   ];
