@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPostBySlug, savePost, deletePost } from "@/lib/posts";
 import type { Post } from "@/lib/posts";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "kezen-admin-2026";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "";
 
 function checkAuth(req: NextRequest): boolean {
   return req.headers.get("x-admin-password") === ADMIN_PASSWORD;
 }
 
 // GET /api/posts/[slug] — single post (public)
-export async function GET(_req: NextRequest, { params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   if (!post || !post.published) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -18,12 +22,16 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
 }
 
 // PUT /api/posts/[slug] — update post (admin)
-export async function PUT(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
   if (!checkAuth(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const existing = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const existing = getPostBySlug(slug);
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -54,16 +62,20 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
 }
 
 // DELETE /api/posts/[slug] — delete post (admin)
-export async function DELETE(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
   if (!checkAuth(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const existing = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const existing = getPostBySlug(slug);
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  deletePost(params.slug);
+  deletePost(slug);
   return NextResponse.json({ success: true });
 }

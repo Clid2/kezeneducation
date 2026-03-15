@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import type { Post } from "@/lib/posts";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type View = "login" | "list" | "editor";
 
 const EMPTY_FORM: Omit<Post, "dateIso" | "date" | "color"> = {
@@ -22,7 +21,6 @@ const EMPTY_FORM: Omit<Post, "dateIso" | "date" | "color"> = {
   author: "Команда Kezen",
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function slugify(title: string): string {
   const map: Record<string, string> = {
     а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"yo",ж:"zh",з:"z",и:"i",й:"y",
@@ -41,7 +39,6 @@ const catColor: Record<string, string> = {
   Strategy: "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300",
 };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 function Alert({ type, msg }: { type: "ok" | "err"; msg: string }) {
   return (
     <div className={`flex items-center gap-2 text-sm px-4 py-3 rounded-xl border ${
@@ -58,12 +55,13 @@ function Alert({ type, msg }: { type: "ok" | "err"; msg: string }) {
 const inputCls = "w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all";
 const labelCls = "block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1.5";
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminClient() {
   const [view, setView] = useState<View>("login");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
   const [storedPw, setStoredPw] = useState("");
+  const [ready, setReady] = useState(false);
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
@@ -75,25 +73,63 @@ export default function AdminClient() {
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  // ── Восстанавливаем сессию из sessionStorage при монтировании ──
+  useEffect(() => {
+    const saved = sessionStorage.getItem("kezen_admin_pw");
+    if (saved) {
+      setStoredPw(saved);
+      setView("list");
+    }
+    setReady(true);
+  }, []);
+
   // ── Auth ──
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!password.trim()) { setAuthError("Введите пароль"); return; }
-    // Quick pre-check — real check happens on API calls
-    setStoredPw(password.trim());
-    setView("list");
     setAuthError("");
+    setLoginLoading(true);
+
+    try {
+      const res = await fetch("/api/posts?all=1", {
+        headers: { "x-admin-password": password.trim() },
+      });
+
+      if (res.status === 401) {
+        setAuthError("Неверный пароль");
+        return;
+      }
+
+      sessionStorage.setItem("kezen_admin_pw", password.trim());
+      setStoredPw(password.trim());
+      setView("list");
+    } catch {
+      setAuthError("Ошибка сети. Попробуйте снова.");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("kezen_admin_pw");
+    setStoredPw("");
+    setPassword("");
+    setView("login");
   };
 
   // ── Fetch posts ──
   const fetchPosts = useCallback(async () => {
     setLoadingPosts(true);
     try {
-      // Fetch all including unpublished via admin header
       const res = await fetch("/api/posts?all=1", {
         headers: { "x-admin-password": storedPw },
       });
       const data = await res.json();
-      if (res.status === 401) { setView("login"); setAuthError("Неверный пароль"); return; }
+      if (res.status === 401) {
+        sessionStorage.removeItem("kezen_admin_pw");
+        setView("login");
+        setAuthError("Сессия истекла. Войдите снова.");
+        return;
+      }
       setPosts(data.posts ?? []);
     } catch {
       setPosts([]);
@@ -103,8 +139,8 @@ export default function AdminClient() {
   }, [storedPw]);
 
   useEffect(() => {
-    if (view === "list") fetchPosts();
-  }, [view, fetchPosts]);
+    if (view === "list" && storedPw) fetchPosts();
+  }, [view, fetchPosts, storedPw]);
 
   // ── Open editor ──
   const openNew = () => {
@@ -155,7 +191,12 @@ export default function AdminClient() {
       });
       const data = await res.json();
 
-      if (res.status === 401) { setView("login"); setAuthError("Сессия истекла. Войдите снова."); return; }
+      if (res.status === 401) {
+        sessionStorage.removeItem("kezen_admin_pw");
+        setView("login");
+        setAuthError("Сессия истекла. Войдите снова.");
+        return;
+      }
       if (!res.ok) { setFeedback({ type: "err", msg: data.error ?? "Ошибка сохранения" }); return; }
 
       setFeedback({ type: "ok", msg: isNew ? "Статья опубликована!" : "Изменения сохранены!" });
@@ -187,9 +228,10 @@ export default function AdminClient() {
     fetchPosts();
   };
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // RENDER: Login
-  // ─────────────────────────────────────────────────────────────────────────────
+  // Ждём гидрации чтобы не было мигания login → list
+  if (!ready) return null;
+
+  // ── RENDER: Login ──
   if (view === "login") {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center px-4">
@@ -210,33 +252,36 @@ export default function AdminClient() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              onKeyDown={(e) => e.key === "Enter" && !loginLoading && handleLogin()}
             />
             {authError && <p className="text-xs text-red-500 mt-2">{authError}</p>}
             <button
               onClick={handleLogin}
-              className="mt-5 w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
+              disabled={loginLoading}
+              className="mt-5 w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl hover:bg-blue-700 disabled:opacity-60 transition-colors"
             >
-              <LogIn size={15} /> Войти
+              {loginLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Проверяю...
+                </>
+              ) : (
+                <><LogIn size={15} /> Войти</>
+              )}
             </button>
           </div>
-
-          <p className="text-center text-xs text-slate-400 mt-4">
-            Пароль по умолчанию: <code className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">kezen-admin-2026</code>
-            <br />Измените его через переменную <code className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">ADMIN_PASSWORD</code>
-          </p>
         </div>
       </div>
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // RENDER: Editor
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ── RENDER: Editor ──
   if (view === "editor") {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-        {/* Top bar */}
         <div className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
           <button
             onClick={() => setView("list")}
@@ -271,7 +316,6 @@ export default function AdminClient() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
           {feedback && <Alert type={feedback.type} msg={feedback.msg} />}
 
-          {/* Row 1: Title */}
           <div>
             <label className={labelCls}>Заголовок *</label>
             <input
@@ -285,7 +329,6 @@ export default function AdminClient() {
             />
           </div>
 
-          {/* Row 2: Slug + Category + ReadTime */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className={labelCls}>URL slug</label>
@@ -321,7 +364,6 @@ export default function AdminClient() {
             </div>
           </div>
 
-          {/* Row 3: Author + Published */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Автор</label>
@@ -332,10 +374,10 @@ export default function AdminClient() {
               />
             </div>
             <div className="flex items-end pb-1">
-              <label className="flex items-center gap-3 cursor-pointer group">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <div
                   onClick={() => setForm((f) => ({ ...f, published: !f.published }))}
-                  className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${form.published ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-600"}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer ${form.published ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-600"}`}
                 >
                   <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${form.published ? "translate-x-5" : ""}`} />
                 </div>
@@ -346,7 +388,6 @@ export default function AdminClient() {
             </div>
           </div>
 
-          {/* Excerpt */}
           <div>
             <label className={labelCls}>Краткое описание * <span className="normal-case font-normal text-slate-400">(показывается в карточке)</span></label>
             <textarea
@@ -358,7 +399,6 @@ export default function AdminClient() {
             />
           </div>
 
-          {/* Content */}
           <div>
             <label className={labelCls}>
               Контент статьи *{" "}
@@ -384,12 +424,9 @@ export default function AdminClient() {
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // RENDER: List
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ── RENDER: List ──
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      {/* Top bar */}
       <div className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -406,6 +443,12 @@ export default function AdminClient() {
             className="flex items-center gap-1.5 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus size={14} /> Новая статья
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-xs text-slate-400 hover:text-red-500 transition-colors px-2 py-1"
+          >
+            Выйти
           </button>
         </div>
       </div>
@@ -432,25 +475,20 @@ export default function AdminClient() {
                 key={post.slug}
                 className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm px-5 py-4 flex items-center gap-4"
               >
-                {/* Status dot */}
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${post.published ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"}`} />
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${catColor[post.category] ?? catColor.Strategy}`}>
                       {post.category}
                     </span>
                     <span className="text-xs text-slate-400">{post.date}</span>
-                    {!post.published && (
-                      <span className="text-xs text-slate-400 italic">черновик</span>
-                    )}
+                    {!post.published && <span className="text-xs text-slate-400 italic">черновик</span>}
                   </div>
                   <p className="text-sm font-semibold text-navy-950 dark:text-white truncate">{post.title}</p>
                   <p className="text-xs text-slate-400 truncate mt-0.5">/blog/{post.slug}</p>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <button
                     onClick={() => togglePublish(post)}
@@ -488,7 +526,6 @@ export default function AdminClient() {
         )}
       </div>
 
-      {/* Delete confirm modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/40 dark:bg-black/60 flex items-center justify-center z-50 px-4">
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-xl p-6 w-full max-w-sm">

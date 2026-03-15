@@ -1,12 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveLead } from "@/lib/db";
 import { sendTelegramNotification } from "@/lib/telegram";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 /**
  * POST /api/leads
  * Saves a contact form submission as a lead.
  */
 export async function POST(request: NextRequest) {
+  // ----- Rate limiting -----
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+
+  const { allowed, retryAfter } = checkRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, errors: [`Слишком много запросов. Попробуйте через ${retryAfter} сек.`] },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
 
@@ -32,15 +47,15 @@ export async function POST(request: NextRequest) {
     }
 
     // ----- Save lead -----
-    const lead = saveLead({ name, email, phone, program, message, locale });
+    const lead = await saveLead({ name, email, phone, program, message, locale });
 
     // ----- Telegram notification -----
-    // ----- Telegram notification -----
-try {
-  await sendTelegramNotification(lead);
-} catch (err) {
-  console.error("[Telegram] Notification error:", err);
-}
+    try {
+      await sendTelegramNotification(lead);
+    } catch (err) {
+      console.error("[Telegram] Notification error:", err);
+    }
+
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {
     console.error("[/api/leads] Error saving lead:", err);
@@ -53,13 +68,19 @@ try {
 
 /**
  * GET /api/leads
- * Returns all stored leads (for internal review).
- * IMPORTANT: In production, protect this route with authentication.
+ * Защищён — требует x-admin-password header.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const provided = request.headers.get("x-admin-password");
+
+  if (!adminPassword || provided !== adminPassword) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { getAllLeads } = await import("@/lib/db");
-    const leads = getAllLeads();
+    const leads = await getAllLeads(); // ← добавить await
     return NextResponse.json({ leads, count: leads.length });
   } catch (err) {
     console.error("[/api/leads] Error fetching leads:", err);

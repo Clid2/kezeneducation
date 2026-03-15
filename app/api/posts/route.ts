@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllPosts, savePost, slugify } from "@/lib/posts";
 import type { Post } from "@/lib/posts";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "kezen-admin-2026";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "от одного до девяти жб";
 
 function checkAuth(req: NextRequest): boolean {
   const auth = req.headers.get("x-admin-password");
@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
       SAT: "blue", IELTS: "green", Strategy: "slate",
     };
 
-    const slug = body.slug?.trim() || slugify(body.title);
+    const rawSlug = body.slug?.trim() || body.title;
+    const slug = slugify(rawSlug);
 
     const post: Post = {
       slug,

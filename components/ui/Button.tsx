@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { forwardRef } from "react";
+import { forwardRef, cloneElement, isValidElement, Children } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "outline";
@@ -10,7 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", children, asChild = false, ...props }, ref) => {
     const base =
       "inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none select-none";
 
@@ -31,10 +31,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "text-base px-7 py-3 h-12",
     };
 
+    const composedClassName = cn(base, variants[variant], sizes[size], className);
+
+    // asChild: merge styles into the single child element (e.g. <Link>)
+    if (asChild) {
+      const child = Children.only(children);
+      if (isValidElement(child)) {
+        return cloneElement(child as React.ReactElement<{ className?: string }>, {
+          className: cn(composedClassName, (child.props as { className?: string }).className),
+        });
+      }
+    }
+
     return (
       <button
         ref={ref}
-        className={cn(base, variants[variant], sizes[size], className)}
+        className={composedClassName}
         {...props}
       >
         {children}

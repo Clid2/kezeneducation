@@ -1,22 +1,4 @@
-/**
- * Lead Storage — JSON file implementation
- *
- * For LOCAL DEV / MVP: stores leads in /data/leads.json
- *
- * IMPORTANT FOR VERCEL DEPLOYMENT:
- * Vercel's serverless filesystem is read-only in production.
- * For production, upgrade to one of:
- *   - Supabase (https://supabase.com) — free tier available
- *   - PlanetScale MySQL
- *   - Neon Serverless Postgres
- *   - MongoDB Atlas
- *
- * To upgrade: replace the functions below with database client calls.
- * The Lead interface and function signatures remain the same.
- */
-
-import fs from "fs";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
 export interface Lead {
   id: string;
@@ -29,60 +11,53 @@ export interface Lead {
   createdAt: string;
 }
 
-// In Vercel production, write to /tmp (ephemeral but functional for demos)
-// For real persistence, use a database
-function getDbPath(): string {
-  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
-    return path.join("/tmp", "leads.json");
-  }
-  return path.join(process.cwd(), "data", "leads.json");
+function getClient() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error("Supabase env vars not set");
+  return createClient(url, key);
 }
 
-function ensureFile(): void {
-  const dbPath = getDbPath();
-  const dir = path.dirname(dbPath);
-  try {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (!fs.existsSync(dbPath)) {
-      fs.writeFileSync(dbPath, "[]", "utf-8");
-    }
-  } catch {
-    // ignore in edge cases
-  }
-}
-
-export function getAllLeads(): Lead[] {
-  ensureFile();
-  try {
-    const raw = fs.readFileSync(getDbPath(), "utf-8");
-    return JSON.parse(raw) as Lead[];
-  } catch {
-    return [];
-  }
-}
-
-export function saveLead(
-  data: Omit<Lead, "id" | "createdAt">
-): Lead {
-  ensureFile();
-  const leads = getAllLeads();
-
-  const newLead: Lead = {
+export async function saveLead(data: Omit<Lead, "id" | "createdAt">): Promise<Lead> {
+  const lead: Lead = {
     ...data,
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     createdAt: new Date().toISOString(),
   };
 
-  leads.push(newLead);
+  const { error } = await getClient()
+    .from("leads")
+    .insert({
+      id: lead.id,
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone,
+      program: lead.program,
+      message: lead.message,
+      locale: lead.locale,
+      created_at: lead.createdAt,
+    });
 
-  try {
-    fs.writeFileSync(getDbPath(), JSON.stringify(leads, null, 2), "utf-8");
-  } catch (err) {
-    console.error("Failed to write lead to file:", err);
-    throw err;
-  }
+  if (error) throw new Error(error.message);
+  return lead;
+}
 
-  return newLead;
+export async function getAllLeads(): Promise<Lead[]> {
+  const { data, error } = await getClient()
+    .from("leads")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone ?? "",
+    program: row.program ?? "",
+    message: row.message ?? "",
+    locale: row.locale ?? "ru",
+    createdAt: row.created_at,
+  }));
 }
