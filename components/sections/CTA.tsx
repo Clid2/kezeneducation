@@ -33,27 +33,33 @@ export default function CTA({
   const resolvedSecondary = secondaryLabel ?? t.cta.defaultSecondary;
 
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-900">
+    <section className="py-24 bg-slate-50 dark:bg-[#06091a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative bg-navy-950 dark:bg-slate-950 rounded-3xl px-8 py-14 md:px-14 text-center overflow-hidden"
+          className="relative bg-[#07091f] dark:bg-[#07091f] rounded-3xl px-8 py-14 md:px-14 text-center overflow-hidden"
         >
+
           <div className="absolute inset-0 bg-dots opacity-10" />
           <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-blue-600/15 blur-3xl" />
           <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-blue-600/10 blur-2xl" />
 
           <div className="relative">
+
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight text-balance">
               {resolvedTitle}
             </h2>
+
             <p className="text-lg text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
               {resolvedSubtitle}
             </p>
+
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+
               <Button variant="primary" size="lg" asChild>
                 <Link href={primaryHref} className="group">
                   {resolvedPrimary}
@@ -63,17 +69,23 @@ export default function CTA({
                   />
                 </Link>
               </Button>
+
               <Button
                 variant="ghost"
                 size="lg"
                 className="text-slate-300 hover:text-white hover:bg-white/10"
                 asChild
               >
-                <Link href={secondaryHref}>{resolvedSecondary}</Link>
+                <Link href={secondaryHref}>
+                  {resolvedSecondary}
+                </Link>
               </Button>
+
             </div>
+
           </div>
         </motion.div>
+
       </div>
     </section>
   );

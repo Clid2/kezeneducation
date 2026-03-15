@@ -17,8 +17,11 @@ export default function Problem() {
   ];
 
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
+    <section className="relative py-24 bg-slate-50 dark:bg-[#06091a] overflow-hidden">
+      <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-red-400/4 dark:bg-red-500/6 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[350px] h-[250px] bg-amber-400/4 dark:bg-amber-500/5 blur-3xl pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="border-t border-slate-100 dark:border-white/8 mb-16" />
         <SectionHeader
           badge={p.badge}
           title={p.title}
@@ -34,19 +37,19 @@ export default function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 shadow-card dark:shadow-none relative overflow-hidden group"
+              className="bg-white dark:bg-[#0d1424] rounded-2xl border border-slate-100 dark:border-white/10 p-6 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow duration-200"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 dark:bg-red-900/10 rounded-full -translate-y-16 translate-x-16 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex items-start gap-4">
                 <div className="text-3xl">{problem.icon}</div>
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-navy-950 dark:text-white mb-2">{problem.title}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-2">{problem.title}</h3>
                     <div className="mt-0.5 w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
                       <X size={11} className="text-red-500 dark:text-red-400" />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{problem.description}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{problem.description}</p>
                 </div>
               </div>
             </motion.div>

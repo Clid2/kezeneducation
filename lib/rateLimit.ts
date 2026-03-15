@@ -1,7 +1,7 @@
 const requests = new Map<string, { count: number; resetAt: number }>();
 
-const LIMIT = 5;
-const WINDOW = 60_000;
+const LIMIT = 5;        // максимум 5 заявок
+const WINDOW = 60_000;  // за 60 секунд с одного IP
 
 export function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
   const now = Date.now();

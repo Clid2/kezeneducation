@@ -2,88 +2,123 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, TrendingUp } from "lucide-react";
-import SectionHeader from "@/components/ui/SectionHeader";
-import Button from "@/components/ui/Button";
+import { ArrowRight, Trophy, Star, Users, TrendingUp, Lock } from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
 
-const results = [
-  { name: "Aizat M.", program: "SAT", before: 1100, after: 1430, months: 4, flag: "🇰🇿" },
-  { name: "Timur K.", program: "SAT", before: 1250, after: 1510, months: 3, flag: "🇰🇿" },
-  { name: "Dina S.", program: "SAT", before: 1080, after: 1420, months: 5, flag: "🇰🇿" },
-  { name: "Arman B.", program: "IELTS", before: 5.5, after: 7.5, months: 3, flag: "🇰🇿" },
-  { name: "Zara N.", program: "SAT", before: 1190, after: 1490, months: 4, flag: "🇰🇿" },
-  { name: "Emil A.", program: "IELTS", before: 6.0, after: 8.0, months: 4, flag: "🇰🇿" },
+const placeholders = [
+  { label: "SAT", months: 4, slot: "Твой результат здесь?" },
+  { label: "SAT", months: 3, slot: "Начни сегодня" },
+  { label: "IELTS", months: 4, slot: "Твоё имя здесь" },
+  { label: "SAT", months: 5, slot: "Запишись сейчас" },
+  { label: "IELTS", months: 3, slot: "Следующий — ты?" },
+  { label: "SAT", months: 4, slot: "Твой результат здесь?" },
 ];
 
 export default function ResultWallPreview() {
   const { t } = useI18n();
-  const r = t.resultsPreview;
 
   return (
-    <section className="py-24 bg-slate-50 dark:bg-slate-800/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader badge={r.badge} title={r.title} subtitle={r.subtitle} />
+    <section className="relative py-24 bg-slate-50 dark:bg-[#06091a] overflow-hidden">
+      <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-blue-400/4 dark:bg-blue-500/6 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[350px] h-[250px] bg-emerald-400/4 dark:bg-emerald-500/5 blur-3xl pointer-events-none" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {results.map((res, i) => (
-            <motion.div
-              key={res.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="border-t border-slate-200 dark:border-white/8 mb-16" />
+
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-4">
+            <Trophy size={12} />
+            Результаты студентов
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">
+            Твоё имя могло быть здесь
+          </h2>
+          <p className="text-slate-600 dark:text-slate-300 text-lg max-w-xl mx-auto">
+            Эти места ждут первых студентов Kezen. Запишись сейчас — и твой результат появится первым.
+          </p>
+        </motion.div>
+
+        {/* Placeholder cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {placeholders.map((item, i) => (
+            <motion.div key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-card dark:shadow-none p-5 hover:shadow-card-hover transition-all duration-300"
+              transition={{ duration: 0.4, delay: i * 0.07 }}
+              className="relative bg-white dark:bg-[#0d1424] rounded-2xl border border-dashed border-slate-300 dark:border-white/15 p-5 overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">
-                    {res.flag}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-navy-950 dark:text-white">{res.name}</div>
-                    <div className="text-xs text-slate-400">{res.months} {r.program}</div>
-                  </div>
+              {/* blur overlay */}
+              <div className="absolute inset-0 backdrop-blur-[1px] bg-white/40 dark:bg-[#0d1424]/60 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl">
+                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/8 border border-slate-200 dark:border-white/10 flex items-center justify-center">
+                  <Lock size={16} className="text-slate-400 dark:text-slate-500" />
                 </div>
-                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${res.program === "SAT" ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" : "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"}`}>
-                  {res.program}
+                <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{item.slot}</span>
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${item.label === "SAT" ? "bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300" : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300"}`}>
+                  {item.label} · {item.months} мес.
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-slate-50 dark:bg-slate-700 rounded-xl p-3 text-center">
-                  <div className="text-xs text-slate-400 mb-0.5">{r.before}</div>
-                  <div className="text-xl font-bold text-slate-400">{res.before}</div>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <TrendingUp size={18} className="text-emerald-500 dark:text-emerald-400" />
-                  <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                    +{Number(res.after) - Number(res.before)}
+              {/* fake content behind blur */}
+              <div className="flex items-center justify-between mb-4 opacity-30">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-white/10" />
+                  <div>
+                    <div className="h-3 w-20 bg-slate-300 dark:bg-white/20 rounded" />
+                    <div className="h-2 w-14 bg-slate-200 dark:bg-white/10 rounded mt-1" />
                   </div>
                 </div>
-                <div className="flex-1 bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 text-center border border-blue-100 dark:border-blue-800">
-                  <div className="text-xs text-blue-500 dark:text-blue-400 mb-0.5">{r.after}</div>
-                  <div className="text-xl font-bold text-blue-600 dark:text-blue-400">{res.after}</div>
+                <div className="h-5 w-10 bg-slate-200 dark:bg-white/10 rounded-full" />
+              </div>
+              <div className="flex items-center gap-3 opacity-30">
+                <div className="flex-1 bg-slate-100 dark:bg-white/5 rounded-xl p-3">
+                  <div className="h-2 w-8 bg-slate-300 dark:bg-white/20 rounded mx-auto mb-1" />
+                  <div className="h-5 w-12 bg-slate-300 dark:bg-white/20 rounded mx-auto" />
+                </div>
+                <TrendingUp size={18} className="text-slate-300 dark:text-white/20" />
+                <div className="flex-1 bg-blue-50 dark:bg-blue-500/10 rounded-xl p-3">
+                  <div className="h-2 w-8 bg-blue-200 dark:bg-blue-400/20 rounded mx-auto mb-1" />
+                  <div className="h-5 w-12 bg-blue-200 dark:bg-blue-400/20 rounded mx-auto" />
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-10 text-center"
-        >
-          <Button variant="outline" size="lg" asChild>
-            <Link href="/results" className="group">
-              {t.common.viewResults}
-              <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-          </Button>
+        {/* CTA block */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.5 }}
+          className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 md:p-10 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
+          <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-left">
+              <div className="flex items-center gap-2 mb-2">
+                <Users size={16} className="text-blue-200" />
+                <span className="text-blue-200 text-sm font-medium">Набор открыт</span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Стань первым студентом Kezen</h3>
+              <p className="text-blue-100 text-sm leading-relaxed max-w-md">
+                Запишись сейчас, пройди диагностику и начни системную подготовку. Твой результат будет первым в этом разделе.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+              <Link href="/contact"
+                className="inline-flex items-center justify-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors duration-200 group whitespace-nowrap">
+                Пройти диагностику
+                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link href="/pricing"
+                className="inline-flex items-center justify-center gap-2 bg-white/15 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/25 transition-colors duration-200 border border-white/20 whitespace-nowrap">
+                Смотреть цены
+              </Link>
+            </div>
+          </div>
         </motion.div>
+
       </div>
     </section>
   );

@@ -9,8 +9,10 @@ export const metadata: Metadata = {
     default: "Kezen Education — SAT & IELTS Preparation",
     template: "%s | Kezen Education",
   },
+
   description:
     "The most systematic SAT & IELTS preparation platform. Structured preparation, real score growth, transparent progress tracking.",
+
   keywords: [
     "SAT preparation",
     "IELTS preparation",
@@ -19,9 +21,12 @@ export const metadata: Metadata = {
     "SAT Kazakhstan",
     "IELTS Kazakhstan",
   ],
+
   authors: [{ name: "Kezen Education" }],
   creator: "Kezen Education",
+
   metadataBase: new URL("https://kezen.edu"),
+
   openGraph: {
     title: "Kezen Education — SAT & IELTS Preparation",
     description:
@@ -30,6 +35,7 @@ export const metadata: Metadata = {
     siteName: "Kezen Education",
     type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Kezen Education",
@@ -44,20 +50,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
+
       <head>
+
         {/* Google Analytics — replace GA_MEASUREMENT_ID */}
         {/* <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> */}
+
         {/* Meta Pixel — replace META_PIXEL_ID */}
         {/* <script>fbq('init', 'META_PIXEL_ID');</script> */}
+
         {/* TikTok Pixel — replace TIKTOK_PIXEL_ID */}
         {/* <script>ttq.load('TIKTOK_PIXEL_ID');</script> */}
+
       </head>
-      <body className="antialiased bg-white dark:bg-slate-900 transition-colors duration-300">
+
+      <body className="antialiased bg-white dark:bg-[#06091a] transition-colors duration-300">
+
         <Providers>
+
           <Navbar />
-          <main>{children}</main>
+
+          <main>
+            {children}
+          </main>
+
           <Footer />
+
         </Providers>
+
       </body>
     </html>
   );
