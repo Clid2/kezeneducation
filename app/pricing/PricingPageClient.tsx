@@ -23,7 +23,7 @@ type IeltsPlan = {
 function AnimatedPrice({ price }: { price: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
-  const num = parseInt(price.replace(/\s/g, ""), 10);
+  const rawNum = price.replace(/[^\d]/g, ""); const num = parseInt(rawNum, 10);
   const mv = useMotionValue(0);
   const spring = useSpring(mv, { stiffness: 45, damping: 20 });
   const display = useTransform(spring, (v) =>
@@ -388,7 +388,7 @@ export default function PricingPageClient() {
           <motion.p
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.16 }}
-            className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-lg mx-auto mb-8 leading-relaxed"
+            className="text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-lg mx-auto mb-8 leading-relaxed"
           >
             {p.subtitle}
           </motion.p>
@@ -402,7 +402,7 @@ export default function PricingPageClient() {
             {p.trustPills.map((text: string) => (
               <span
                 key={text}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100 bg-white dark:bg-white/8 border border-slate-200 dark:border-white/15 rounded-full px-4 py-2 shadow-sm"
+                className="inline-flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-white bg-white dark:bg-white/15 border border-slate-200 dark:border-white/30 rounded-full px-4 py-2 shadow-md"
               >
                 <Check size={13} className="text-blue-500 dark:text-blue-400" strokeWidth={2.5} />
                 {text}
