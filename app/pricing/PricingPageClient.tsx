@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Check, ArrowRight, Zap, Sparkles } from "lucide-react";
 import Badge from "@/components/ui/Badge";
-import SectionHeader from "@/components/ui/SectionHeader";
 import CTA from "@/components/sections/CTA";
 import { useI18n } from "@/lib/i18n-context";
 
@@ -21,67 +20,83 @@ type IeltsPlan = {
 };
 
 /* ── Animated price counter ── */
-function AnimatedPrice({ price, currency = "" }: { price: string; currency?: string }) {
+function AnimatedPrice({ price }: { price: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
   const num = parseInt(price.replace(/\s/g, ""), 10);
   const mv = useMotionValue(0);
   const spring = useSpring(mv, { stiffness: 45, damping: 20 });
   const display = useTransform(spring, (v) =>
-    isNaN(num) ? price : currency + Math.round(v).toLocaleString("ru-RU")
+    isNaN(num) ? price : Math.round(v).toLocaleString("ru-RU")
   );
   useEffect(() => { if (inView && !isNaN(num)) mv.set(num); }, [inView, mv, num]);
   if (isNaN(num)) return <span ref={ref}>{price}</span>;
   return <motion.span ref={ref}>{display}</motion.span>;
 }
 
-/* ── Express card — статичная синяя рамка + pulse glow ── */
+/* ── Section label ── */
+function SectionLabel({ text, color = "blue" }: { text: string; color?: "blue" | "indigo" }) {
+  const cls = color === "indigo"
+    ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 border-indigo-100 dark:border-indigo-500/20"
+    : "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20";
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-widest mb-4 ${cls}`}>
+      {text}
+    </span>
+  );
+}
+
+/* ── Divider between sections ── */
+function Divider() {
+  return <div className="border-t border-slate-100 dark:border-white/8 mb-16" />;
+}
+
+/* ── Express card — highlighted center card ── */
 function ExpressCard({ plan, badgeLabel }: { plan: SatPlan; badgeLabel: string }) {
   return (
     <div className="relative md:-mt-8 pt-6" style={{ zIndex: 10 }}>
-      {/* Badge */}
+      {/* floating badge */}
       <div className="absolute top-0 inset-x-0 flex justify-center" style={{ zIndex: 20 }}>
         <motion.span
           animate={{ y: [0, -3, 0] }}
           transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-          className="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-blue-600/40 tracking-wide"
+          className="inline-flex items-center gap-1.5 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-blue-600/30 tracking-wide"
         >
           <Zap size={10} fill="currentColor" />
           {badgeLabel}
         </motion.span>
       </div>
 
-      {/* Pulsing glow behind card */}
+      {/* pulse glow — only visible in dark */}
       <motion.div
-        className="absolute inset-4 rounded-2xl bg-blue-600/20 blur-2xl pointer-events-none"
+        className="absolute inset-4 rounded-2xl bg-blue-600/15 blur-2xl pointer-events-none hidden dark:block"
         animate={{ opacity: [0.4, 0.8, 0.4] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Card — solid blue border, no spinning */}
-      <div className="relative rounded-2xl border-2 border-blue-500/70 bg-[#07091f] overflow-hidden shadow-2xl shadow-blue-900/40">
-        {/* Static top glow line */}
+      {/* card */}
+      <div className="relative rounded-2xl border-2 border-blue-500 bg-slate-900 dark:bg-[#07091f] overflow-hidden shadow-2xl shadow-blue-500/20">
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-blue-500/15 blur-2xl pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-blue-500/10 blur-2xl pointer-events-none" />
 
         <div className="relative p-8">
           <div className="text-xs font-medium text-blue-400 mb-1.5 tracking-wide">{plan.tagline}</div>
           <div className="text-3xl font-bold text-white mb-6 tracking-tight">{plan.name}</div>
 
           <div className="pb-5 mb-5 border-b border-white/10">
-            <div className="text-sm text-slate-500 mb-1">от</div>
+            <div className="text-sm font-semibold text-slate-300 mb-1 tracking-wide uppercase">от</div>
             <div className="text-4xl font-black text-white leading-none tracking-tight">
               ₸<AnimatedPrice price={plan.price} />
             </div>
             {plan.period && <div className="text-sm text-slate-400 mt-1">{plan.period}</div>}
             <div className="flex flex-wrap gap-2 mt-3">
               {plan.duration && (
-                <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-500/40 text-blue-100 border border-blue-400/60">
                   {plan.duration}
                 </span>
               )}
               {plan.schedule && (
-                <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-white/6 text-slate-400 border border-white/10">
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white border border-white/35">
                   {plan.schedule}
                 </span>
               )}
@@ -119,7 +134,7 @@ function ExpressCard({ plan, badgeLabel }: { plan: SatPlan; badgeLabel: string }
   );
 }
 
-/* ── Standard card ── */
+/* ── Standard card (blue accent) ── */
 function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
   return (
     <motion.div
@@ -128,27 +143,27 @@ function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.18 } }}
-      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0d1220] p-7 shadow-sm hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-250"
+      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d1220] p-7 hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-lg dark:hover:bg-[#0f1628] transition-all duration-200"
     >
-      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-blue-300/40 to-transparent" />
+      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-blue-400/40 dark:via-blue-400/25 to-transparent" />
 
-      <div className="text-xs text-slate-400 dark:text-slate-500 mb-1.5 tracking-wide">{plan.tagline}</div>
+      <div className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 tracking-wide">{plan.tagline}</div>
       <div className="text-2xl font-bold text-slate-900 dark:text-white mb-5 tracking-tight">{plan.name}</div>
 
       <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
-        <div className="text-sm text-slate-400 mb-0.5">от</div>
+        <div className="text-sm font-semibold text-slate-500 dark:text-slate-300 mb-0.5 tracking-wide uppercase">от</div>
         <div className="text-3xl font-black text-slate-900 dark:text-white leading-none tracking-tight">
           ₸<AnimatedPrice price={plan.price} />
         </div>
         {plan.period && <div className="text-sm text-slate-400 mt-1">{plan.period}</div>}
         <div className="flex flex-wrap gap-2 mt-3">
           {plan.duration && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/50">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-500/30 text-blue-700 dark:text-blue-200 border border-blue-300 dark:border-blue-400/50">
               {plan.duration}
             </span>
           )}
           {plan.schedule && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-white/8">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-600/60 text-slate-600 dark:text-slate-200 border border-slate-300 dark:border-slate-500">
               {plan.schedule}
             </span>
           )}
@@ -158,7 +173,7 @@ function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
       <ul className="space-y-2.5 mb-7 flex-1">
         {plan.features.map((feat) => (
           <li key={feat} className="flex items-start gap-2.5">
-            <div className="flex-shrink-0 w-4 h-4 rounded-full bg-blue-50 dark:bg-blue-900/25 border border-blue-100 dark:border-blue-800/40 flex items-center justify-center mt-0.5">
+            <div className="flex-shrink-0 w-4 h-4 rounded-full bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/25 flex items-center justify-center mt-0.5">
               <Check size={9} strokeWidth={3} className="text-blue-500 dark:text-blue-400" />
             </div>
             <span className="text-sm text-slate-600 dark:text-slate-300 leading-snug">{feat}</span>
@@ -168,7 +183,7 @@ function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
 
       <Link
         href="/contact"
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all duration-200 group"
+        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-500/50 dark:hover:text-blue-400 transition-all duration-200 group"
       >
         Записаться
         <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -177,7 +192,7 @@ function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
   );
 }
 
-/* ── Individual card — orange/amber accent ── */
+/* ── Individual card (amber accent) ── */
 function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
   const isOnRequest = plan.price === "По запросу" || plan.price === "On request" || plan.price === "Сұраныс бойынша";
 
@@ -188,15 +203,12 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.18 } }}
-      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-amber-900/40 bg-white dark:bg-[#14100a] p-7 shadow-sm hover:shadow-lg hover:border-amber-300 dark:hover:border-amber-700/60 transition-all duration-250"
+      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#14100a] p-7 hover:border-amber-300 dark:hover:border-amber-500/40 hover:shadow-lg dark:hover:bg-[#1a1208] transition-all duration-200"
     >
-      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-      <div className="absolute top-0 inset-x-0 h-16 bg-amber-500/3 pointer-events-none rounded-t-2xl" />
+      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/50 dark:via-amber-400/25 to-transparent" />
+      <Sparkles size={14} className="absolute top-5 right-5 text-amber-400/30 dark:text-amber-400/25" />
 
-      {/* sparkle */}
-      <Sparkles size={15} className="absolute top-5 right-5 text-amber-400/40" />
-
-      <div className="text-xs text-slate-400 dark:text-slate-500 mb-1.5 tracking-wide">{plan.tagline}</div>
+      <div className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 tracking-wide">{plan.tagline}</div>
       <div className="text-2xl font-bold text-slate-900 dark:text-white mb-5 tracking-tight">{plan.name}</div>
 
       <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
@@ -206,7 +218,7 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
           </div>
         ) : (
           <>
-            <div className="text-sm text-slate-400 mb-0.5">от</div>
+            <div className="text-sm font-semibold text-slate-500 dark:text-slate-300 mb-0.5 tracking-wide uppercase">от</div>
             <div className="text-3xl font-black text-slate-900 dark:text-white leading-none tracking-tight">
               ₸<AnimatedPrice price={plan.price} />
             </div>
@@ -215,7 +227,7 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
         {plan.period && <div className="text-sm text-slate-400 mt-1">{plan.period}</div>}
         <div className="flex flex-wrap gap-2 mt-3">
           {plan.duration && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/40">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-500/30 text-amber-700 dark:text-amber-200 border border-amber-300 dark:border-amber-400/50">
               {plan.duration}
             </span>
           )}
@@ -225,7 +237,7 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
       <ul className="space-y-2.5 mb-7 flex-1">
         {plan.features.map((feat) => (
           <li key={feat} className="flex items-start gap-2.5">
-            <div className="flex-shrink-0 w-4 h-4 rounded-full bg-amber-50 dark:bg-amber-900/25 border border-amber-100 dark:border-amber-800/40 flex items-center justify-center mt-0.5">
+            <div className="flex-shrink-0 w-4 h-4 rounded-full bg-amber-50 dark:bg-amber-500/15 border border-amber-100 dark:border-amber-500/25 flex items-center justify-center mt-0.5">
               <Check size={9} strokeWidth={3} className="text-amber-500 dark:text-amber-400" />
             </div>
             <span className="text-sm text-slate-600 dark:text-slate-300 leading-snug">{feat}</span>
@@ -235,7 +247,7 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
 
       <Link
         href="/contact"
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-amber-900/50 text-slate-700 dark:text-slate-200 hover:border-amber-400 hover:text-amber-600 dark:hover:border-amber-600 dark:hover:text-amber-400 transition-all duration-200 group"
+        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-amber-400 hover:text-amber-600 dark:hover:border-amber-500/50 dark:hover:text-amber-400 transition-all duration-200 group"
       >
         Записаться
         <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -257,18 +269,19 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={!isHL ? { y: -4, transition: { duration: 0.18 } } : {}}
-      className={`relative rounded-2xl flex flex-col transition-all duration-250 ${
+      className={`relative rounded-2xl flex flex-col transition-all duration-200 p-7 ${
         isHL
-          ? "border-2 border-blue-500/60 bg-[#07091f] shadow-xl shadow-blue-900/30 p-7"
-          : "border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0d1220] shadow-sm hover:shadow-lg hover:border-indigo-300 dark:hover:border-indigo-700 p-7"
+          ? "border-2 border-blue-500 bg-slate-900 dark:bg-[#07091f] shadow-xl shadow-blue-500/15"
+          : "border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d1220] hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:shadow-lg"
       }`}
     >
-      {/* top line */}
-      <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent ${isHL ? "via-blue-400" : "via-indigo-300/40"} to-transparent`} />
+      <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent to-transparent ${
+        isHL ? "via-blue-400" : "via-indigo-400/40 dark:via-indigo-400/25"
+      }`} />
 
       {isHL && (
         <motion.div
-          className="absolute inset-4 rounded-xl bg-blue-600/10 blur-2xl pointer-events-none"
+          className="absolute inset-4 rounded-xl bg-blue-600/8 blur-2xl pointer-events-none"
           animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -276,7 +289,7 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
 
       {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md shadow-blue-600/30">
+          <span className="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md shadow-blue-600/25">
             <Zap size={9} fill="currentColor" />
             {plan.badge === "Best Value" ? bestValueLabel : plan.badge}
           </span>
@@ -301,7 +314,7 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
               <span className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${
                 isHL
                   ? "bg-blue-500/15 text-blue-300 border-blue-500/25"
-                  : "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800/40"
+                  : "bg-indigo-100 dark:bg-indigo-500/30 text-indigo-700 dark:text-indigo-200 border-indigo-200 dark:border-indigo-400/50"
               }`}>
                 {plan.duration}
               </span>
@@ -315,7 +328,7 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
               <div className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 border ${
                 isHL
                   ? "bg-blue-500/20 border-blue-500/30"
-                  : "bg-indigo-50 dark:bg-indigo-900/25 border-indigo-100 dark:border-indigo-800/40"
+                  : "bg-indigo-50 dark:bg-indigo-500/15 border-indigo-100 dark:border-indigo-500/25"
               }`}>
                 <Check size={9} strokeWidth={3} className={isHL ? "text-blue-400" : "text-indigo-500 dark:text-indigo-400"} />
               </div>
@@ -331,7 +344,7 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
           className={`w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 group ${
             isHL
               ? "bg-blue-600 hover:bg-blue-500 text-white"
-              : "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500 dark:hover:text-indigo-400"
+              : "border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500/50 dark:hover:text-indigo-400"
           }`}
         >
           Записаться
@@ -351,17 +364,16 @@ export default function PricingPageClient() {
   const expressBadge = (p.satPlans as SatPlan[]).find((pl) => pl.highlight)?.badge ?? p.mostPopular;
 
   return (
-    <div className="pt-20 bg-white dark:bg-slate-900">
+    <div className="pt-20 bg-white dark:bg-[#06091a]">
 
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-[#06091a] dark:bg-[#06091a] pt-16 pb-0">
-        {/* background elements */}
-        <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-blue-600/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-[300px] h-[200px] bg-indigo-600/8 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[200px] bg-blue-500/8 blur-3xl pointer-events-none" />
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden pt-16 pb-0 bg-slate-50 dark:bg-[#06091a]">
+        <div className="absolute inset-0 bg-grid opacity-30 dark:opacity-20 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[280px] bg-blue-500/6 dark:bg-blue-600/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[300px] h-[180px] bg-indigo-500/5 dark:bg-indigo-600/8 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[180px] bg-blue-500/5 dark:bg-blue-600/8 blur-3xl pointer-events-none" />
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-14">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <Badge variant="blue" className="mb-6">{p.badge}</Badge>
           </motion.div>
@@ -369,7 +381,7 @@ export default function PricingPageClient() {
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-5 leading-[1.08]"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight mb-5 leading-[1.08]"
           >
             {p.title}
           </motion.h1>
@@ -377,7 +389,7 @@ export default function PricingPageClient() {
           <motion.p
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.16 }}
-            className="text-base md:text-lg text-slate-400 max-w-lg mx-auto mb-10 leading-relaxed"
+            className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-lg mx-auto mb-8 leading-relaxed"
           >
             {p.subtitle}
           </motion.p>
@@ -386,51 +398,42 @@ export default function PricingPageClient() {
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.24 }}
-            className="flex flex-wrap items-center justify-center gap-3 mb-12"
+            className="flex flex-wrap items-center justify-center gap-3 mb-8"
           >
-            {[
-              { icon: "✓", text: "Без скрытых платежей" },
-              { icon: "✓", text: "Доступ к платформе включён" },
-              { icon: "✓", text: "Kaspi рассрочка" },
-            ].map((item) => (
+            {["Без скрытых платежей", "Платформа включена", "Kaspi рассрочка"].map((text) => (
               <span
-                key={item.text}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-white/6 border border-white/10 rounded-full px-3.5 py-1.5"
+                key={text}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-700/80 border border-slate-200 dark:border-slate-500 rounded-full px-4 py-2 shadow-sm"
               >
-                <span className="text-blue-400 font-bold">{item.icon}</span>
-                {item.text}
+                <span className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-400/30 flex items-center justify-center flex-shrink-0">
+                  <Check size={10} strokeWidth={3} className="text-blue-600 dark:text-blue-300" />
+                </span>
+                {text}
               </span>
             ))}
           </motion.div>
 
-          {/* Stats row */}
+          {/* CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.32 }}
-            className="grid grid-cols-3 max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.32 }}
           >
-            {[
-              { value: "500+", label: "студентов прошли" },
-              { value: "+250", label: "средний прирост SAT" },
-              { value: "96%", label: "улучшили результат" },
-            ].map((stat, i) => (
-              <div
-                key={stat.label}
-                className={`text-center py-4 ${i !== 2 ? "border-r border-white/10" : ""}`}
-              >
-                <div className="text-2xl md:text-3xl font-black text-white tracking-tight">{stat.value}</div>
-                <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
-              </div>
-            ))}
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 shadow-lg shadow-blue-500/20 group"
+            >
+              Записаться на диагностику — бесплатно
+              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
+            </Link>
           </motion.div>
         </div>
 
-        {/* smooth fade into next section */}
-        <div className="h-12 bg-gradient-to-b from-transparent to-slate-900 pointer-events-none" />
+        {/* fade into next section */}
+        <div className="h-10 bg-gradient-to-b from-transparent to-white dark:to-[#06091a] pointer-events-none" />
       </section>
 
-      {/* SAT Plans */}
-      <section className="pt-12 pb-24 bg-slate-900">
+      {/* ── SAT PLANS ── */}
+      <section className="pt-10 pb-24 bg-white dark:bg-[#06091a]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -439,14 +442,11 @@ export default function PricingPageClient() {
             transition={{ duration: 0.5 }}
             className="mb-14"
           >
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-400 uppercase tracking-widest mb-3">
-              <span className="w-4 h-px bg-blue-400" />
-              {p.satBadge}
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
+            <SectionLabel text={p.satBadge} color="blue" />
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
               {p.satTitle}
             </h2>
-            <p className="text-slate-400 text-base max-w-xl">{p.satSubtitle}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-base max-w-xl">{p.satSubtitle}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center" style={{ overflow: "visible" }}>
@@ -483,11 +483,25 @@ export default function PricingPageClient() {
         </div>
       </section>
 
-      {/* IELTS Plans */}
-      <section className="py-24 bg-white dark:bg-slate-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader badge={p.ieltsBadge} title={p.ieltsTitle} subtitle={p.ieltsSubtitle} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      {/* ── IELTS PLANS ── */}
+      <section className="py-6 bg-white dark:bg-[#06091a]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Divider />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-14"
+          >
+            <SectionLabel text={p.ieltsBadge} color="indigo" />
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+              {p.ieltsTitle}
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-base max-w-xl">{p.ieltsSubtitle}</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto pb-16">
             {(p.ieltsPlans as IeltsPlan[]).map((plan, i) => (
               <IeltsCard key={plan.name} plan={plan} delay={i * 0.1} bestValueLabel={p.bestValue} />
             ))}
@@ -495,11 +509,23 @@ export default function PricingPageClient() {
         </div>
       </section>
 
-      {/* Payment Methods */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-800/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader badge={p.paymentBadge} title={p.paymentTitle} subtitle={p.paymentSubtitle} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-3xl mx-auto mb-8">
+      {/* ── PAYMENT METHODS ── */}
+      <section className="py-6 bg-white dark:bg-[#06091a]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Divider />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-10 text-center"
+          >
+            <SectionLabel text={p.paymentBadge} color="blue" />
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">{p.paymentTitle}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-base">{p.paymentSubtitle}</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-6 pb-16">
             {p.paymentMethods.map((method, i) => (
               <motion.div
                 key={method.name}
@@ -508,7 +534,7 @@ export default function PricingPageClient() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
                 whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 text-center hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md transition-all duration-200"
+                className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 text-center hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-md dark:hover:bg-white/8 transition-all duration-200"
               >
                 <div className="text-3xl mb-3">{method.icon}</div>
                 <div className="font-semibold text-slate-900 dark:text-white mb-1">{method.name}</div>
@@ -516,10 +542,11 @@ export default function PricingPageClient() {
               </motion.div>
             ))}
           </div>
-          <p className="text-center text-sm text-slate-400 dark:text-slate-500">{p.installmentNote}</p>
+          <p className="text-center text-sm text-slate-400 dark:text-slate-600 pb-4">{p.installmentNote}</p>
         </div>
       </section>
 
+      {/* ── CTA ── */}
       <CTA
         title={p.ctaTitle}
         subtitle={p.ctaSubtitle}
