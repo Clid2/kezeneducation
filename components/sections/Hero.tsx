@@ -44,14 +44,20 @@ export default function Hero() {
   {h.title.includes("SAT и IELTS") ? (
     <>
       {h.title.split("SAT и IELTS")[0]}
-      <span className="text-blue-600 dark:text-blue-400">SAT и IELTS</span>
+      <span className="text-blue-600 dark:text-blue-400"> SAT и IELTS</span>
       {h.title.split("SAT и IELTS")[1]}
     </>
   ) : h.title.includes("SAT & IELTS") ? (
     <>
       {h.title.split("SAT & IELTS")[0]}
-      <span className="text-blue-600 dark:text-blue-400">SAT & IELTS</span>
+      <span className="text-blue-600 dark:text-blue-400"> SAT & IELTS</span>
       {h.title.split("SAT & IELTS")[1]}
+    </>
+  ) : h.title.includes("SAT және IELTS-ке") ? (
+    <>
+      {h.title.split("SAT және IELTS-ке")[0]}
+      <span className="text-blue-600 dark:text-blue-400"> SAT және IELTS-ке </span>
+      {h.title.split("SAT және IELTS-ке")[1]}
     </>
   ) : (
     h.title

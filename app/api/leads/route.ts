@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveLead } from "@/lib/db";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 /**
  * POST /api/leads
@@ -33,6 +34,13 @@ export async function POST(request: NextRequest) {
     // ----- Save lead -----
     const lead = saveLead({ name, email, phone, program, message, locale });
 
+    // ----- Telegram notification -----
+    // ----- Telegram notification -----
+try {
+  await sendTelegramNotification(lead);
+} catch (err) {
+  console.error("[Telegram] Notification error:", err);
+}
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {
     console.error("[/api/leads] Error saving lead:", err);
