@@ -5,17 +5,18 @@ import Link from "next/link";
 import { ArrowRight, Trophy, Star, Users, TrendingUp, Lock } from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
 
-const placeholders = [
-  { label: "SAT", months: 4, slot: "Твой результат здесь?" },
-  { label: "SAT", months: 3, slot: "Начни сегодня" },
-  { label: "IELTS", months: 4, slot: "Твоё имя здесь" },
-  { label: "SAT", months: 5, slot: "Запишись сейчас" },
-  { label: "IELTS", months: 3, slot: "Следующий — ты?" },
-  { label: "SAT", months: 4, slot: "Твой результат здесь?" },
-];
-
 export default function ResultWallPreview() {
   const { t } = useI18n();
+  const r = t.resultsPreview;
+
+  const placeholders = [
+    { label: "SAT",   months: 4, slot: r.slot1 },
+    { label: "SAT",   months: 3, slot: r.slot2 },
+    { label: "IELTS", months: 4, slot: r.slot3 },
+    { label: "SAT",   months: 5, slot: r.slot4 },
+    { label: "IELTS", months: 3, slot: r.slot5 },
+    { label: "SAT",   months: 4, slot: r.slot1 },
+  ];
 
   return (
     <section className="relative py-24 bg-slate-50 dark:bg-[#06091a] overflow-hidden">
@@ -30,13 +31,13 @@ export default function ResultWallPreview() {
           viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-14">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-4">
             <Trophy size={12} />
-            Результаты студентов
+            {r.sectionLabel}
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">
-            Твоё имя могло быть здесь
+            {r.emptyTitle}
           </h2>
           <p className="text-slate-600 dark:text-slate-300 text-lg max-w-xl mx-auto">
-            Эти места ждут первых студентов Kezen. Запишись сейчас — и твой результат появится первым.
+            {r.emptyDesc}
           </p>
         </motion.div>
 
@@ -57,7 +58,7 @@ export default function ResultWallPreview() {
                 </div>
                 <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{item.slot}</span>
                 <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${item.label === "SAT" ? "bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300" : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300"}`}>
-                  {item.label} · {item.months} мес.
+                  {item.label} · {item.months} {r.program}
                 </span>
               </div>
 
@@ -98,27 +99,26 @@ export default function ResultWallPreview() {
             <div className="text-left">
               <div className="flex items-center gap-2 mb-2">
                 <Users size={16} className="text-blue-200" />
-                <span className="text-blue-200 text-sm font-medium">Набор открыт</span>
+                <span className="text-blue-200 text-sm font-medium">{r.ctaEnrollOpen}</span>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Стань первым студентом Kezen</h3>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{r.ctaEnrollTitle}</h3>
               <p className="text-blue-100 text-sm leading-relaxed max-w-md">
-                Запишись сейчас, пройди диагностику и начни системную подготовку. Твой результат будет первым в этом разделе.
+                {r.ctaEnrollDesc}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
               <Link href="/contact"
-                className="inline-flex items-center justify-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors duration-200 group whitespace-nowrap">
-                Пройти диагностику
-                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+                className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors duration-200 text-sm group">
+                {r.ctaEnrollPrimary}
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link href="/pricing"
-                className="inline-flex items-center justify-center gap-2 bg-white/15 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/25 transition-colors duration-200 border border-white/20 whitespace-nowrap">
-                Смотреть цены
+                className="inline-flex items-center gap-2 bg-white/15 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-white/25 transition-colors duration-200 border border-white/20 text-sm">
+                {r.ctaEnrollSecondary}
               </Link>
             </div>
           </div>
         </motion.div>
-
       </div>
     </section>
   );

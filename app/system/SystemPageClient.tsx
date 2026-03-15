@@ -37,7 +37,6 @@ function StepCard({ step, i, total }: {
 
   return (
     <div ref={ref} className="relative flex gap-6">
-      {/* connector line */}
       {!isLast && (
         <motion.div
           className={`absolute left-[19px] top-12 bottom-0 w-[2px] ${colors.line} origin-top`}
@@ -47,7 +46,6 @@ function StepCard({ step, i, total }: {
         />
       )}
 
-      {/* number circle */}
       <motion.div
         className={`relative z-10 w-10 h-10 rounded-full ${colors.num} text-white font-black text-sm flex items-center justify-center flex-shrink-0 shadow-md`}
         initial={{ scale: 0, opacity: 0 }}
@@ -57,16 +55,12 @@ function StepCard({ step, i, total }: {
         {i + 1}
       </motion.div>
 
-      {/* card */}
       <motion.div
         initial={{ opacity: 0, x: 24 }}
         animate={inView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.45, delay: 0.1 + i * 0.08, ease: "easeOut" }}
         className={`flex-1 bg-white dark:bg-[#0d1424] rounded-2xl border ${colors.border} shadow-sm p-6 mb-5`}
       >
-        {/* top accent line */}
-        <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30 ${colors.icon}`} />
-
         <div className="flex items-start gap-4">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${colors.bg}`}>
             <Icon size={18} className={colors.icon} />
@@ -102,25 +96,16 @@ export default function SystemPageClient() {
     <div className="pt-20 bg-white dark:bg-[#06091a]">
 
       {/* ── HERO ── */}
-      <section className="relative py-24 md:py-32 overflow-hidden bg-[#f0f4ff] dark:bg-[#06091a]">
-        {/* light glows */}
-        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full bg-blue-200/60 blur-3xl pointer-events-none dark:hidden" />
-        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-indigo-200/50 blur-3xl pointer-events-none dark:hidden" />
-        {/* dark glows */}
-        <div className="absolute -top-40 right-0 w-[600px] h-[400px] rounded-full bg-blue-500/12 blur-3xl pointer-events-none hidden dark:block" />
-        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] rounded-full bg-indigo-500/8 blur-3xl pointer-events-none hidden dark:block" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-violet-500/6 blur-3xl pointer-events-none hidden dark:block" />
-        {/* grid */}
+      <section className="relative py-24 md:py-32 overflow-hidden bg-[#f5f7ff] dark:bg-[#06091a]">
+        <div className="absolute -top-20 -right-20 w-[500px] h-[400px] rounded-full bg-blue-200/60 blur-3xl pointer-events-none dark:hidden" />
+        <div className="absolute bottom-0 -left-20 w-[400px] h-[300px] rounded-full bg-violet-200/50 blur-3xl pointer-events-none dark:hidden" />
+        <div className="absolute -top-40 right-0 w-[500px] h-[350px] rounded-full bg-blue-500/12 blur-3xl pointer-events-none hidden dark:block" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] rounded-full bg-violet-500/8 blur-3xl pointer-events-none hidden dark:block" />
         <div className="absolute inset-0 bg-grid opacity-20 dark:opacity-10 pointer-events-none" />
-        {/* dots */}
-        <div className="absolute top-20 right-[20%] w-3 h-3 rounded-full bg-blue-400/40 dark:bg-blue-400/25 pointer-events-none" />
-        <div className="absolute top-40 left-[15%] w-2 h-2 rounded-full bg-indigo-400/35 dark:bg-indigo-400/20 pointer-events-none" />
-        <div className="absolute bottom-28 right-[12%] w-4 h-4 rounded-full bg-violet-300/30 dark:bg-violet-400/15 pointer-events-none" />
-        <div className="absolute bottom-16 left-[25%] w-2 h-2 rounded-full bg-blue-400/35 dark:bg-blue-400/20 pointer-events-none" />
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Badge variant="blue" className="mb-6">{s.badge}</Badge>
+            <Badge variant="blue" className="mb-6 text-sm px-5 py-2">{s.badge}</Badge>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -153,10 +138,10 @@ export default function SystemPageClient() {
           >
             <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-3">
               <span className="w-4 h-px bg-blue-600 dark:bg-blue-400" />
-              6 этапов
+              {s.stepsLabel}
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-3">От диагностики до результата</h2>
-            <p className="text-slate-600 dark:text-slate-300 text-lg max-w-xl">Каждый этап строится на предыдущем. Ничего лишнего.</p>
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-3">{s.stepsTitle}</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-lg max-w-xl">{s.stepsSubtitle}</p>
           </motion.div>
           <div className="max-w-3xl mx-auto">
             {s.steps.map((step, i) => (
@@ -215,17 +200,17 @@ export default function SystemPageClient() {
             transition={{ duration: 0.55 }}
             className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-10 md:p-14 text-white shadow-xl shadow-blue-200 dark:shadow-blue-900/30"
           >
-            <div className="text-3xl md:text-4xl font-bold mb-4">Готовы начать системную подготовку?</div>
-            <p className="text-blue-100 text-lg mb-8 leading-relaxed">Пройдите бесплатную диагностику — покажем, где вы сейчас и как быстро вырасти.</p>
+            <div className="text-3xl md:text-4xl font-bold mb-4">{s.ctaTitle}</div>
+            <p className="text-blue-100 text-lg mb-8 leading-relaxed">{s.ctaSubtitle}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/contact"
                 className="inline-flex items-center justify-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors duration-200 group">
-                Пройти диагностику
+                {s.ctaPrimary}
                 <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link href="/pricing"
                 className="inline-flex items-center justify-center gap-2 bg-white/15 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/25 transition-colors duration-200 border border-white/20">
-                Смотреть цены
+                {s.ctaSecondary}
               </Link>
             </div>
           </motion.div>

@@ -52,7 +52,7 @@ function Divider() {
 }
 
 /* ── Express card — highlighted center card ── */
-function ExpressCard({ plan, badgeLabel }: { plan: SatPlan; badgeLabel: string }) {
+function ExpressCard({ plan, badgeLabel, enrollLabel }: { plan: SatPlan; badgeLabel: string; enrollLabel: string }) {
   return (
     <div className="relative md:-mt-8 pt-6" style={{ zIndex: 10 }}>
       {/* floating badge */}
@@ -125,7 +125,7 @@ function ExpressCard({ plan, badgeLabel }: { plan: SatPlan; badgeLabel: string }
             href="/contact"
             className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white transition-colors duration-200 group"
           >
-            Записаться
+            {enrollLabel}
             <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
@@ -134,85 +134,84 @@ function ExpressCard({ plan, badgeLabel }: { plan: SatPlan; badgeLabel: string }
   );
 }
 
-/* ── Standard card (blue accent) ── */
-function StandardCard({ plan, delay }: { plan: SatPlan; delay: number }) {
+/* ── Standard card ── */
+function StandardCard({ plan, delay, enrollLabel }: { plan: SatPlan; delay: number; enrollLabel: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.18 } }}
-      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d1220] p-7 hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-lg dark:hover:bg-[#0f1628] transition-all duration-200"
+      className="relative rounded-2xl flex flex-col transition-all duration-200 p-7 border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d1220] hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:shadow-lg"
     >
-      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-blue-400/40 dark:via-blue-400/25 to-transparent" />
+      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-indigo-400/40 dark:via-indigo-400/25 to-transparent" />
 
-      <div className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 tracking-wide">{plan.tagline}</div>
-      <div className="text-2xl font-bold text-slate-900 dark:text-white mb-5 tracking-tight">{plan.name}</div>
+      <div className="relative">
+        <div className="text-xs mb-1.5 tracking-wide text-slate-400 dark:text-slate-500">{plan.tagline}</div>
+        <div className="text-2xl font-bold mb-5 tracking-tight text-slate-900 dark:text-white">{plan.name}</div>
 
-      <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
-        <div className="text-sm font-semibold text-slate-500 dark:text-slate-300 mb-0.5 tracking-wide uppercase">от</div>
-        <div className="text-3xl font-black text-slate-900 dark:text-white leading-none tracking-tight">
-          ₸<AnimatedPrice price={plan.price} />
-        </div>
-        {plan.period && <div className="text-sm text-slate-400 mt-1">{plan.period}</div>}
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
+          <div className="text-4xl font-black leading-none tracking-tight text-slate-900 dark:text-white">
+            {plan.currency}<AnimatedPrice price={plan.price} />
+            <span className="text-sm font-normal ml-1 text-slate-400">{plan.period}</span>
+          </div>
           {plan.duration && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-500/30 text-blue-700 dark:text-blue-200 border border-blue-300 dark:border-blue-400/50">
-              {plan.duration}
-            </span>
-          )}
-          {plan.schedule && (
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-600/60 text-slate-600 dark:text-slate-200 border border-slate-300 dark:border-slate-500">
-              {plan.schedule}
-            </span>
+            <div className="mt-3">
+              <span className="text-xs font-medium px-2.5 py-1 rounded-lg border bg-indigo-100 dark:bg-indigo-500/30 text-indigo-700 dark:text-indigo-200 border-indigo-200 dark:border-indigo-400/50">
+                {plan.duration}
+              </span>
+              {plan.schedule && (
+                <span className="ml-2 text-xs font-medium px-2.5 py-1 rounded-lg border bg-slate-100 dark:bg-white/8 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15">
+                  {plan.schedule}
+                </span>
+              )}
+            </div>
           )}
         </div>
+
+        <ul className="space-y-2.5 mb-7 flex-1">
+          {plan.features.map((feat) => (
+            <li key={feat} className="flex items-start gap-2.5">
+              <div className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 border bg-indigo-50 dark:bg-indigo-500/15 border-indigo-100 dark:border-indigo-500/25">
+                <Check size={9} strokeWidth={3} className="text-indigo-500 dark:text-indigo-400" />
+              </div>
+              <span className="text-sm leading-snug text-slate-600 dark:text-slate-300">{feat}</span>
+            </li>
+          ))}
+        </ul>
+
+        <Link
+          href="/contact"
+          className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 group border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500/50 dark:hover:text-indigo-400"
+        >
+          {enrollLabel}
+          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+        </Link>
       </div>
-
-      <ul className="space-y-2.5 mb-7 flex-1">
-        {plan.features.map((feat) => (
-          <li key={feat} className="flex items-start gap-2.5">
-            <div className="flex-shrink-0 w-4 h-4 rounded-full bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/25 flex items-center justify-center mt-0.5">
-              <Check size={9} strokeWidth={3} className="text-blue-500 dark:text-blue-400" />
-            </div>
-            <span className="text-sm text-slate-600 dark:text-slate-300 leading-snug">{feat}</span>
-          </li>
-        ))}
-      </ul>
-
-      <Link
-        href="/contact"
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-500/50 dark:hover:text-blue-400 transition-all duration-200 group"
-      >
-        Записаться
-        <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-      </Link>
     </motion.div>
   );
 }
 
-/* ── Individual card (amber accent) ── */
-function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
-  const isOnRequest = plan.price === "По запросу" || plan.price === "On request" || plan.price === "Сұраныс бойынша";
-
+/* ── Individual card ── */
+function IndividualCard({ plan, delay, enrollLabel }: { plan: SatPlan; delay: number; enrollLabel: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.18 } }}
-      className="relative flex flex-col rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#14100a] p-7 hover:border-amber-300 dark:hover:border-amber-500/40 hover:shadow-lg dark:hover:bg-[#1a1208] transition-all duration-200"
+      className="relative rounded-2xl flex flex-col bg-gradient-to-br from-slate-800 to-slate-900 dark:from-[#0d1220] dark:to-[#07091a] border border-slate-700 dark:border-amber-500/20 p-7 hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/5 transition-all duration-200"
     >
-      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/50 dark:via-amber-400/25 to-transparent" />
-      <Sparkles size={14} className="absolute top-5 right-5 text-amber-400/30 dark:text-amber-400/25" />
+      <Sparkles size={16} className="absolute top-5 right-5 text-amber-500/40" />
+      <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
 
-      <div className="text-xs text-slate-500 dark:text-slate-400 mb-1.5 tracking-wide">{plan.tagline}</div>
-      <div className="text-2xl font-bold text-slate-900 dark:text-white mb-5 tracking-tight">{plan.name}</div>
+      <div className="text-xs mb-1.5 tracking-wide text-amber-500/80">{plan.tagline}</div>
+      <div className="text-2xl font-bold mb-5 tracking-tight text-white">{plan.name}</div>
 
-      <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
-        {isOnRequest ? (
+      <div className="pb-5 mb-5 border-b border-white/10">
+        {isNaN(parseInt(plan.price)) ? (
           <div className="text-3xl font-black text-amber-500 dark:text-amber-400 leading-none tracking-tight">
             {plan.price}
           </div>
@@ -249,7 +248,7 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
         href="/contact"
         className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-amber-400 hover:text-amber-600 dark:hover:border-amber-500/50 dark:hover:text-amber-400 transition-all duration-200 group"
       >
-        Записаться
+        {enrollLabel}
         <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
       </Link>
     </motion.div>
@@ -257,8 +256,8 @@ function IndividualCard({ plan, delay }: { plan: SatPlan; delay: number }) {
 }
 
 /* ── IELTS card ── */
-function IeltsCard({ plan, delay, bestValueLabel }: {
-  plan: IeltsPlan; delay: number; bestValueLabel: string;
+function IeltsCard({ plan, delay, bestValueLabel, enrollLabel }: {
+  plan: IeltsPlan; delay: number; bestValueLabel: string; enrollLabel: string;
 }) {
   const isHL = plan.highlight;
 
@@ -347,7 +346,7 @@ function IeltsCard({ plan, delay, bestValueLabel }: {
               : "border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500/50 dark:hover:text-indigo-400"
           }`}
         >
-          Записаться
+          {enrollLabel}
           <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
@@ -394,47 +393,39 @@ export default function PricingPageClient() {
             {p.subtitle}
           </motion.p>
 
-          {/* Trust pills */}
+          {/* Trust pills — из переводов */}
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.24 }}
             className="flex flex-wrap items-center justify-center gap-3 mb-8"
           >
-            {["Без скрытых платежей", "Платформа включена", "Kaspi рассрочка"].map((text) => (
+            {p.trustPills.map((text: string) => (
               <span
                 key={text}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-700/80 border border-slate-200 dark:border-slate-500 rounded-full px-4 py-2 shadow-sm"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100 bg-white dark:bg-white/8 border border-slate-200 dark:border-white/15 rounded-full px-4 py-2 shadow-sm"
               >
-                <span className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-400/30 flex items-center justify-center flex-shrink-0">
-                  <Check size={10} strokeWidth={3} className="text-blue-600 dark:text-blue-300" />
-                </span>
+                <Check size={13} className="text-blue-500 dark:text-blue-400" strokeWidth={2.5} />
                 {text}
               </span>
             ))}
           </motion.div>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.32 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.32 }}>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 shadow-lg shadow-blue-500/20 group"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-colors duration-200 shadow-lg shadow-blue-600/20 group text-sm"
             >
-              Записаться на диагностику — бесплатно
+              {p.ctaPrimary}
               <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </motion.div>
         </div>
-
-        {/* fade into next section */}
-        <div className="h-10 bg-gradient-to-b from-transparent to-white dark:to-[#06091a] pointer-events-none" />
       </section>
 
       {/* ── SAT PLANS ── */}
-      <section className="pt-10 pb-24 bg-white dark:bg-[#06091a]">
+      <section className="py-6 bg-white dark:bg-[#06091a]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Divider />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -449,7 +440,7 @@ export default function PricingPageClient() {
             <p className="text-slate-500 dark:text-slate-400 text-base max-w-xl">{p.satSubtitle}</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center" style={{ overflow: "visible" }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start pb-16">
             {(p.satPlans as SatPlan[]).map((plan, i) => {
               if (plan.highlight) {
                 return (
@@ -460,12 +451,12 @@ export default function PricingPageClient() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.1 }}
                   >
-                    <ExpressCard plan={plan} badgeLabel={expressBadge} />
+                    <ExpressCard plan={plan} badgeLabel={expressBadge} enrollLabel={p.enrollNow} />
                   </motion.div>
                 );
               }
-              if (i === 0) return <StandardCard key={plan.name} plan={plan} delay={0} />;
-              return <IndividualCard key={plan.name} plan={plan} delay={0.2} />;
+              if (i === 0) return <StandardCard key={plan.name} plan={plan} delay={0} enrollLabel={p.enrollNow} />;
+              return <IndividualCard key={plan.name} plan={plan} delay={0.2} enrollLabel={p.enrollNow} />;
             })}
           </div>
 
@@ -503,7 +494,7 @@ export default function PricingPageClient() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto pb-16">
             {(p.ieltsPlans as IeltsPlan[]).map((plan, i) => (
-              <IeltsCard key={plan.name} plan={plan} delay={i * 0.1} bestValueLabel={p.bestValue} />
+              <IeltsCard key={plan.name} plan={plan} delay={i * 0.1} bestValueLabel={p.bestValue} enrollLabel={p.enrollNow} />
             ))}
           </div>
         </div>
