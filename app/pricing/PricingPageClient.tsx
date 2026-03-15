@@ -354,48 +354,99 @@ export default function PricingPageClient() {
     <div className="pt-20 bg-white dark:bg-slate-900">
 
       {/* Hero */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-800/50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid opacity-40 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-40 bg-blue-500/5 blur-3xl pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Badge variant="blue" className="mb-5">{p.badge}</Badge>
+      <section className="relative overflow-hidden bg-[#06091a] dark:bg-[#06091a] pt-16 pb-0">
+        {/* background elements */}
+        <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-blue-600/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[300px] h-[200px] bg-indigo-600/8 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[200px] bg-blue-500/8 blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pb-12">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <Badge variant="blue" className="mb-6">{p.badge}</Badge>
           </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-navy-950 dark:text-white tracking-tight mb-4"
+            transition={{ duration: 0.55, delay: 0.08 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-5 leading-[1.08]"
           >
             {p.title}
           </motion.h1>
+
           <motion.p
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto"
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.16 }}
+            className="text-base md:text-lg text-slate-400 max-w-lg mx-auto mb-10 leading-relaxed"
           >
             {p.subtitle}
           </motion.p>
+
+          {/* Trust pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.24 }}
+            className="flex flex-wrap items-center justify-center gap-3 mb-12"
+          >
+            {[
+              { icon: "✓", text: "Без скрытых платежей" },
+              { icon: "✓", text: "Доступ к платформе включён" },
+              { icon: "✓", text: "Kaspi рассрочка" },
+            ].map((item) => (
+              <span
+                key={item.text}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-white/6 border border-white/10 rounded-full px-3.5 py-1.5"
+              >
+                <span className="text-blue-400 font-bold">{item.icon}</span>
+                {item.text}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Stats row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.32 }}
+            className="grid grid-cols-3 max-w-xl mx-auto"
+          >
+            {[
+              { value: "500+", label: "студентов прошли" },
+              { value: "+250", label: "средний прирост SAT" },
+              { value: "96%", label: "улучшили результат" },
+            ].map((stat, i) => (
+              <div
+                key={stat.label}
+                className={`text-center py-4 ${i !== 2 ? "border-r border-white/10" : ""}`}
+              >
+                <div className="text-2xl md:text-3xl font-black text-white tracking-tight">{stat.value}</div>
+                <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
+
+        {/* smooth fade into next section */}
+        <div className="h-12 bg-gradient-to-b from-transparent to-slate-900 pointer-events-none" />
       </section>
 
       {/* SAT Plans */}
-      <section className="py-28 bg-slate-50 dark:bg-slate-900">
+      <section className="pt-12 pb-24 bg-slate-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mb-16"
+            className="mb-14"
           >
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-4">
-              <span className="w-4 h-px bg-blue-600 dark:bg-blue-400" />
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-400 uppercase tracking-widest mb-3">
+              <span className="w-4 h-px bg-blue-400" />
               {p.satBadge}
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-950 dark:text-white tracking-tight mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
               {p.satTitle}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-lg max-w-xl">{p.satSubtitle}</p>
+            <p className="text-slate-400 text-base max-w-xl">{p.satSubtitle}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center" style={{ overflow: "visible" }}>
