@@ -62,7 +62,6 @@ export default function AboutPageClient() {
                 transition={{ duration: 0.4, delay: 0.4 + i * 0.08 }}
                 className="bg-white/60 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 rounded-2xl p-5 text-left"
               >
-                <div className="text-2xl mb-3">{v.icon}</div>
                 <div className="font-bold text-slate-900 dark:text-white text-sm mb-1.5">{v.title}</div>
                 <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{v.desc}</div>
               </motion.div>
@@ -121,7 +120,7 @@ export default function AboutPageClient() {
             <p className="text-slate-600 dark:text-slate-300 text-lg max-w-xl">{a.whySubtitle}</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {(a.whyFeatures ?? []).map((f, i) => {
+            {(a.features ?? []).map((f, i) => {
               const color = featureColors[i % 4];
               const c = colorMap[color];
               const Icon = featureIcons[i % 4];
