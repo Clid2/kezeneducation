@@ -18,6 +18,11 @@ type IeltsPlan = {
   period?: string; duration?: string; highlight: boolean;
   badge?: string; features: readonly string[];
 };
+type PlatformPlan = {
+  name: string; tagline: string; price: string; currency: string;
+  period?: string; highlight: boolean; badge?: string;
+  savings?: string; features: readonly string[];
+};
 
 /* ── Animated price counter ── */
 function AnimatedPrice({ price }: { price: string }) {
@@ -84,7 +89,7 @@ function ExpressCard({ plan, badgeLabel, enrollLabel }: { plan: SatPlan; badgeLa
           <div className="text-3xl font-bold text-white mb-6 tracking-tight">{plan.name}</div>
 
           <div className="pb-5 mb-5 border-b border-white/10">
-            <div className="text-sm font-semibold text-slate-300 mb-1 tracking-wide uppercase">от</div>
+            <div className="text-sm font-semibold text-slate-400 mb-1 tracking-wide uppercase">от</div>
             <div className="text-4xl font-black text-white leading-none tracking-tight">
               ₸<AnimatedPrice price={plan.price} />
             </div>
@@ -152,8 +157,11 @@ function StandardCard({ plan, delay, enrollLabel }: { plan: SatPlan; delay: numb
         <div className="text-2xl font-bold mb-5 tracking-tight text-slate-900 dark:text-white">{plan.name}</div>
 
         <div className="pb-5 mb-5 border-b border-slate-100 dark:border-white/8">
+          <div className="text-sm font-semibold mb-1 tracking-wide uppercase text-slate-400">
+            {plan.currency.split(" ")[0]}
+          </div>
           <div className="text-4xl font-black leading-none tracking-tight text-slate-900 dark:text-white">
-            {plan.currency}<AnimatedPrice price={plan.price} />
+            ₸<AnimatedPrice price={plan.price} />
             <span className="text-sm font-normal ml-1 text-slate-400">{plan.period}</span>
           </div>
           {plan.duration && (
@@ -162,7 +170,7 @@ function StandardCard({ plan, delay, enrollLabel }: { plan: SatPlan; delay: numb
                 {plan.duration}
               </span>
               {plan.schedule && (
-                <span className="ml-2 text-xs font-medium px-2.5 py-1 rounded-lg border bg-slate-100 dark:bg-white/8 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15">
+                <span className="ml-2 text-xs font-medium px-2.5 py-1 rounded-full border bg-white/8 dark:bg-white/10 text-white/90 dark:text-white/90 border-white/20 dark:border-white/20">
                   {plan.schedule}
                 </span>
               )}
@@ -304,8 +312,11 @@ function IeltsCard({ plan, delay, bestValueLabel, enrollLabel }: {
         </div>
 
         <div className={`pb-5 mb-5 border-b ${isHL ? "border-white/10" : "border-slate-100 dark:border-white/8"}`}>
+          <div className="text-sm font-semibold mb-1 tracking-wide uppercase text-slate-400">
+            {plan.currency.split(" ")[0]}
+          </div>
           <div className={`text-4xl font-black leading-none tracking-tight ${isHL ? "text-white" : "text-slate-900 dark:text-white"}`}>
-            {plan.currency}<AnimatedPrice price={plan.price} />
+            ₸<AnimatedPrice price={plan.price} />
             <span className="text-sm font-normal ml-1 text-slate-400">{plan.period}</span>
           </div>
           {plan.duration && (
@@ -344,6 +355,106 @@ function IeltsCard({ plan, delay, bestValueLabel, enrollLabel }: {
             isHL
               ? "bg-blue-600 hover:bg-blue-500 text-white"
               : "border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500/50 dark:hover:text-indigo-400"
+          }`}
+        >
+          {enrollLabel}
+          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+        </Link>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Platform Access card ── */
+function PlatformCard({ plan, delay, enrollLabel }: {
+  plan: PlatformPlan; delay: number; enrollLabel: string;
+}) {
+  const isHL = plan.highlight;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ y: -4, transition: { duration: 0.18 } }}
+      className={`relative rounded-2xl flex flex-col transition-all duration-200 p-7 ${
+        isHL
+          ? "border-2 border-emerald-500 bg-gradient-to-br from-emerald-950 to-emerald-900 dark:from-emerald-950/50 dark:to-[#07091f] shadow-xl shadow-emerald-500/20"
+          : "border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0d1220] hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:shadow-lg"
+      }`}
+    >
+      <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent to-transparent ${
+        isHL ? "via-emerald-400" : "via-emerald-400/40 dark:via-emerald-400/25"
+      }`} />
+
+      {isHL && (
+        <>
+          <motion.div
+            className="absolute inset-4 rounded-xl bg-emerald-600/12 blur-2xl pointer-events-none"
+            animate={{ opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {plan.savings && (
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-emerald-600/30">
+                <Sparkles size={10} fill="currentColor" />
+                {plan.savings}
+              </span>
+            </div>
+          )}
+        </>
+      )}
+
+      {!isHL && plan.badge && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="inline-flex items-center gap-1 bg-slate-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+            {plan.badge}
+          </span>
+        </div>
+      )}
+
+      <div className="relative">
+        <div className={`text-xs mb-1.5 tracking-wide ${isHL ? "text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}>
+          {plan.tagline}
+        </div>
+        <div className={`text-2xl font-bold mb-5 tracking-tight ${isHL ? "text-white" : "text-slate-900 dark:text-white"}`}>
+          {plan.name}
+        </div>
+
+        <div className={`pb-5 mb-5 border-b ${isHL ? "border-white/10" : "border-slate-100 dark:border-white/8"}`}>
+          <div className="text-sm font-semibold mb-1 tracking-wide uppercase text-slate-400">
+            {plan.currency}
+          </div>
+          <div className={`text-4xl font-black leading-none tracking-tight ${isHL ? "text-white" : "text-slate-900 dark:text-white"}`}>
+            ₸<AnimatedPrice price={plan.price} />
+            {plan.period && <span className="text-sm font-normal ml-1 text-slate-400">{plan.period}</span>}
+          </div>
+        </div>
+
+        <ul className="space-y-2.5 mb-7 flex-1">
+          {plan.features.map((feat) => (
+            <li key={feat} className="flex items-start gap-2.5">
+              <div className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mt-0.5 border ${
+                isHL
+                  ? "bg-emerald-500/20 border-emerald-500/30"
+                  : "bg-emerald-50 dark:bg-emerald-500/15 border-emerald-100 dark:border-emerald-500/25"
+              }`}>
+                <Check size={9} strokeWidth={3} className={isHL ? "text-emerald-400" : "text-emerald-500 dark:text-emerald-400"} />
+              </div>
+              <span className={`text-sm leading-snug ${isHL ? "text-slate-300" : "text-slate-600 dark:text-slate-300"}`}>
+                {feat}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <Link
+          href="/contact"
+          className={`w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold transition-colors duration-200 group ${
+            isHL
+              ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+              : "border border-slate-200 dark:border-white/12 text-slate-700 dark:text-slate-200 hover:border-emerald-400 hover:text-emerald-600 dark:hover:border-emerald-500/50 dark:hover:text-emerald-400"
           }`}
         >
           {enrollLabel}
@@ -474,6 +585,124 @@ export default function PricingPageClient() {
         </div>
       </section>
 
+      {/* ── COMBO PLANS (IELTS + SAT) ── */}
+      {"combPlans" in p && (
+        <section className="py-6 bg-white dark:bg-[#06091a]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Divider />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-14 text-center max-w-3xl mx-auto"
+            >
+              <SectionLabel text={(p as any).combBadge} color="blue" />
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight mb-4">
+                {(p as any).combTitle}
+              </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400">{(p as any).combSubtitle}</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start pb-16">
+              {((p as any).combPlans as SatPlan[]).map((plan, i) => {
+                if (plan.highlight) {
+                  return (
+                    <motion.div
+                      key={plan.name}
+                      initial={{ opacity: 0, y: 32 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
+                      className="relative md:-mt-8 pt-6"
+                      style={{ zIndex: 10 }}
+                    >
+                      {/* floating badge */}
+                      <div className="absolute top-0 inset-x-0 flex justify-center" style={{ zIndex: 20 }}>
+                        <motion.span
+                          animate={{ y: [0, -3, 0] }}
+                          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                          className="inline-flex items-center gap-1.5 bg-violet-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-violet-600/30 tracking-wide"
+                        >
+                          <Zap size={10} fill="currentColor" />
+                          {expressBadge}
+                        </motion.span>
+                      </div>
+
+                      {/* pulse glow — only visible in dark */}
+                      <motion.div
+                        className="absolute inset-4 rounded-2xl bg-violet-600/15 blur-2xl pointer-events-none hidden dark:block"
+                        animate={{ opacity: [0.4, 0.8, 0.4] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      />
+
+                      {/* card */}
+                      <div className="relative rounded-2xl border-2 border-violet-500 bg-slate-900 dark:bg-[#07091f] overflow-hidden shadow-2xl shadow-violet-500/20">
+                        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-violet-500/10 blur-2xl pointer-events-none" />
+
+                        <div className="relative p-8">
+                          <div className="text-xs font-medium text-violet-400 mb-1.5 tracking-wide">{plan.tagline}</div>
+                          <div className="text-3xl font-bold text-white mb-6 tracking-tight">{plan.name}</div>
+
+                          <div className="pb-5 mb-5 border-b border-white/10">
+                            <div className="text-sm font-semibold text-slate-400 mb-1 tracking-wide uppercase">от</div>
+                            <div className="text-4xl font-black text-white leading-none tracking-tight">
+                              ₸<AnimatedPrice price={plan.price} />
+                            </div>
+                            {plan.period && <div className="text-sm text-slate-400 mt-1">{plan.period}</div>}
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {plan.duration && (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-violet-500/40 text-violet-100 border border-violet-400/60">
+                                  {plan.duration}
+                                </span>
+                              )}
+                              {plan.schedule && (
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white border border-white/35">
+                                  {plan.schedule}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <ul className="space-y-3 mb-7">
+                            {plan.features.map((feat, idx) => (
+                              <motion.li
+                                key={feat}
+                                initial={{ opacity: 0, x: -6 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.04 * idx }}
+                                className="flex items-start gap-3"
+                              >
+                                <div className="flex-shrink-0 w-4 h-4 rounded-full bg-violet-500/20 border border-violet-500/30 flex items-center justify-center mt-0.5">
+                                  <Check size={9} strokeWidth={3} className="text-violet-400" />
+                                </div>
+                                <span className="text-sm text-slate-300 leading-snug">{feat}</span>
+                              </motion.li>
+                            ))}
+                          </ul>
+
+                          <Link
+                            href="/contact"
+                            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold bg-violet-600 hover:bg-violet-500 text-white transition-colors duration-200 group"
+                          >
+                            {p.enrollNow}
+                            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                          </Link>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                }
+                if (i === 0) return <StandardCard key={plan.name} plan={plan} delay={0} enrollLabel={p.enrollNow} />;
+                return <IndividualCard key={plan.name} plan={plan} delay={0.2} enrollLabel={p.enrollNow} />;
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── IELTS PLANS ── */}
       <section className="py-6 bg-white dark:bg-[#06091a]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -499,6 +728,34 @@ export default function PricingPageClient() {
           </div>
         </div>
       </section>
+
+      {/* ── PLATFORM ACCESS ── */}
+      {"platformPlans" in p && (
+        <section className="py-6 bg-white dark:bg-[#06091a]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Divider />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-14"
+            >
+              <SectionLabel text={(p as any).platformBadge} color="blue" />
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
+                {(p as any).platformTitle}
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 text-base max-w-xl">{(p as any).platformSubtitle}</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto pb-16">
+              {((p as any).platformPlans as PlatformPlan[]).map((plan, i) => (
+                <PlatformCard key={plan.name} plan={plan} delay={i * 0.1} enrollLabel={p.enrollNow} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── PAYMENT METHODS ── */}
       <section className="py-6 bg-white dark:bg-[#06091a]">

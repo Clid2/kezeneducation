@@ -372,6 +372,9 @@ export const en = {
     satBadge: "SAT Programs",
     satTitle: "SAT Preparation Programs",
     satSubtitle: "From group classes to 1-on-1 coaching — choose based on your goals and timeline.",
+    combBadge: "COMBO OFFER",
+    combTitle: "IELTS + SAT",
+    combSubtitle: "Maximum results on both exams with savings up to 30%",
     ieltsBadge: "IELTS Programs",
     ieltsTitle: "IELTS Preparation Plans",
     ieltsSubtitle: "Two programs designed around your target band and timeline.",
@@ -386,13 +389,24 @@ export const en = {
     ctaPrimary: "Take Free Diagnostic",
     ctaSecondary: "Contact Us",
     satPlans: [
-      { name: "Standard", tagline: "For students just starting out", price: "108,000", currency: "from ₸", period: "per course", duration: "3 months", schedule: "3 sessions/week · 90 min", highlight: false, badge: undefined, features: ["Full SAT preparation program", "3 lessons per week, 90 minutes each", "Steady pace — great for beginners", "Regular mock tests", "Homework review", "Mistake analysis and weak topic work", "Access to study materials"] },
-      { name: "Express", tagline: "For motivated students with some base", price: "90,000", currency: "from ₸", period: "per course", duration: "1 month", schedule: "5 sessions/week · 90 min", highlight: true, badge: "Best Choice", features: ["Same SAT program — completed faster", "5 lessons per week, 90 minutes each", "High intensity — for driven students", "Frequent mock tests", "Homework review", "Focused work on weak topics"] },
+      { name: "Standard", tagline: "For students just starting out", price: "108,000", currency: "from ₸", period: "per course", duration: "3 months", schedule: "3 sessions/week · 60 min", highlight: false, badge: undefined, features: ["Full SAT preparation program", "3 lessons per week, 60 minutes each", "Steady pace — great for beginners", "Regular mock tests", "Homework review", "Mistake analysis and weak topic work", "Access to study materials"] },
+      { name: "Express", tagline: "For motivated students with some base", price: "90,000", currency: "from ₸", period: "per course", duration: "1 month", schedule: "5 sessions/week · 60 min", highlight: true, badge: "Best Choice", features: ["Same SAT program — completed faster", "5 lessons per week, 60 minutes each", "High intensity — for driven students", "Frequent mock tests", "Homework review", "Focused work on weak topics"] },
       { name: "Individual", tagline: "Personal preparation format", price: "On request", currency: "", period: "", duration: "Flexible", schedule: "Flexible schedule", highlight: false, badge: undefined, features: ["1-on-1 individual lessons", "Personal learning pace", "Flexible scheduling", "SAT or IELTS preparation only"] },
     ],
+    combPlans: [
+      { name: "Standard", tagline: "Balanced dual-exam prep", price: "209,000", currency: "from ₸", period: "per course", duration: "6 months", schedule: "3 sessions/week · 60 min", highlight: false, badge: undefined, features: ["SAT and IELTS preparation combined", "Balanced workload", "Regular mock tests for both exams", "Homework review", "Mistake analysis", "Platform access"] },
+      { name: "Express", tagline: "Intensive dual-exam preparation", price: "180,000", currency: "from ₸", period: "per course", duration: "2 months", schedule: "5 sessions/week · 60 min", highlight: true, badge: "Best Choice", features: ["Intensive SAT + IELTS prep", "Fast-track weak topic closure", "Frequent mock tests", "Personal recommendations", "High intensity workload"] },
+    ],
     ieltsPlans: [
-      { name: "Standard", tagline: "Comprehensive band preparation", price: "55,000", currency: "₸", period: "/month", duration: "3 months", highlight: false, features: ["All 4 IELTS sections", "Group size: 6–10 students", "Weekly mock essays", "Speaking practice sessions", "AI speaking drills", "Dashboard access", "Mistake bank", "Points & leaderboard"] },
-      { name: "Express", tagline: "Fast-track to your target band", price: "75,000", currency: "₸", period: "/month", duration: "6 weeks", highlight: true, badge: "Best Value", features: ["All Standard features", "Intensive lesson schedule", "Group size: 4–6 students", "Extra speaking mock exams", "Band 7+ writing workshops", "Priority feedback", "Final exam preparation", "Mock exam debrief sessions"] },
+      { name: "Standard", tagline: "Comprehensive band preparation", price: "40,000", currency: "from ₸", period: "/month", duration: "3 months", highlight: false, features: ["All 4 IELTS sections", "Group size: 6–10 students", "Weekly mock essays", "Speaking practice sessions", "AI speaking drills", "Dashboard access", "Mistake bank", "Points & leaderboard"] },
+      { name: "Express", tagline: "Fast-track to your target band", price: "110,000", currency: "from ₸", period: "per course", duration: "1 month", highlight: true, badge: "Best Value", features: ["All 4 IELTS sections", "20 lessons", "Intensive lesson schedule", "Group size: 4–6 students", "Extra speaking mock exams", "Band 7+ writing workshops", "Priority feedback", "Final exam preparation", "Mock exam debrief sessions"] },
+    ],
+    platformBadge: "Platform Access",
+    platformTitle: "Self-Paced Platform Access",
+    platformSubtitle: "Get full access to our learning platform without instructor-led classes. Perfect for self-motivated learners.",
+    platformPlans: [
+      { name: "Platform Access", tagline: "SAT or IELTS self-paced prep", price: "11,990", currency: "from ₸", period: "/month", highlight: false, features: ["Choose SAT or IELTS access", "Full platform features", "Mock test engine", "AI speaking drills (IELTS)", "Writing feedback system", "Mistake bank & analytics", "Progress tracking dashboard", "Study materials library", "Email support"] },
+      { name: "SAT + IELTS Bundle", tagline: "Complete platform access", price: "19,000", currency: "from ₸", period: "/month", highlight: true, savings: "Save 37%", features: ["Everything from single access", "Both SAT and IELTS platforms", "Combined mock tests", "Dual progress tracking", "Comprehensive analytics", "Priority email support", "All study materials", "Leaderboard & points system"] },
     ],
     paymentMethods: [
       { name: "Kaspi Pay", icon: "🏦", desc: "Kaspi Gold, QR payment, installments" },

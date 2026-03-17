@@ -102,16 +102,20 @@ export default function IELTSPageClient() {
                 <Badge variant= "green" className="mb-6 text-sm px-5 py-2">{il.badge}</Badge>
               </motion.div>
               <motion.h1
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight mb-6 leading-[1.08]"
+                initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight mb-6 leading-[1.05]"
               >
-                {il.heroTitle.split(".").map((part, i) => (
-                  <span key={i}>
-                    {i > 0 && <br />}
-                    {part.trim()}{i < il.heroTitle.split(".").length - 1 ? "." : ""}
-                  </span>
-                ))}
+                {il.heroTitle.split("Band 7+")[0]}
+                <span className="relative inline-block">
+                  <span className="text-emerald-600 dark:text-emerald-400">Band 7+</span>
+                  <motion.svg viewBox="0 0 100 8" className="absolute -bottom-1 left-0 w-full"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+                    <motion.path d="M2 5 Q25 1 50 5 Q75 9 98 5" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round"
+                      initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.7 }} />
+                  </motion.svg>
+                </span>
+                {il.heroTitle.split("Band 7+")[1] ?? ""}
               </motion.h1>
 
               <motion.p
